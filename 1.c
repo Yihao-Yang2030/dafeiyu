@@ -28,6 +28,11 @@ int main()
         if(b==0)
         break;
         struct data *new=(struct data*)malloc(sizeof(struct data));
+        if(new==NULL)
+        {
+            printf("创建节点失败");
+            break;
+        }
         strcpy(new->name,a);
         new->age=b;
         strcpy(new->sex,c);

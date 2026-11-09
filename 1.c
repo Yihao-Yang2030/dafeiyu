@@ -10,12 +10,14 @@ struct data
     char address[20];
     struct data *next;
 };
+void qingchuhuancun();
+void duqu();
+char * duqu1();
 struct data *head=NULL;
 struct data *tail=NULL;
 struct data *p;
 int main()
 {
-    void duqu();
     system("chcp 65001");
     printf("欢迎使用通讯录管理系统！\n");
     printf("=================== 通讯录管理系统 ===================\n");
@@ -26,7 +28,7 @@ int main()
     printf("  5.删除联系人");
     printf("                     6.保存并退出\n");
     printf("               使用完后请务必选择6保存并退出,否则文件会被清空\n");
-    printf("请输入1-9的数字\n");
+    printf("请输入1-6的数字\n");
     while(1)
     {
         int number;
@@ -37,7 +39,7 @@ int main()
                 break;
             }
             scanf("%d",&number);
-            printf("输入有误,请输入1-9的数字\n");
+            printf("输入有误,请输入1-6的数字\n");
             continue;
         }
         switch(number){
@@ -94,13 +96,13 @@ int main()
             p=p->next;
         }
         fclose(fp);
-        }
         out:
         printf("存储结束\n");
-        printf("请输入1-9的数字\n");
-        break;
+        printf("请输入1-6的数字\n");
+        qingchuhuancun();
+        break;}
         case 2:
-        duqu();
+        {duqu();
         char str[20];
         int found=0;
         printf("请输入想要查找的联系人\n");
@@ -120,22 +122,28 @@ int main()
         {
             printf("查无此人\n");
         }
+        qingchuhuancun();
         printf("查找结束\n");
-        printf("请输入1-9的数字\n");
+        printf("请输入1-6的数字\n");
         break;
+    }
         case 3:
-        duqu();
+        {
+            duqu();
         p=head;
         while(p!=NULL)
         {
             printf("%s %d %s %lld %s\n",p->name,p->age,p->sex,p->phone,p->address);
             p=p->next;
         }
+        qingchuhuancun();
         printf("显示完毕\n");
-        printf("请输入1-9的数字\n");
+        printf("请输入1-6的数字\n");
         break;
+    }
         case 4:
-        duqu();
+        {
+        char * filename=duqu1();
         p=head;
         char str1[20];
         char a[20];
@@ -143,16 +151,8 @@ int main()
         char c[20];
         long long d;
         char e[20];
-        char filename[20];
         FILE *fp1;
         int found1=0;
-        printf("请输入想要修改的文件夹\n");
-        scanf("%s",filename);
-            if((fp1=fopen(filename,"w"))==NULL)
-            {
-                printf("cen't open file\n");
-                exit(0);
-            }
             printf("请输入想要修改的联系人\n");
             scanf("%s",str1);
         while(p!=NULL)
@@ -185,6 +185,11 @@ int main()
         {
             printf("查无此人，没有修改任何联系人\n");
         }
+        if((fp1=fopen(filename,"w"))==NULL)
+            {
+                printf("cen't open file\n");
+                exit(0);
+            }
         p=head;
         while(p!=NULL)
         {
@@ -192,18 +197,18 @@ int main()
             p=p->next;
         }
         fclose(fp1);
-        printf("请输入1-9的数字\n");
+        qingchuhuancun();
+        printf("请输入1-6的数字\n");
         break;
+    }
         case 5:
-        duqu();
+        {
+        char * filename1=duqu1();
         struct data *q=NULL;
         int found2=0;
         p=head;
-        char filename1[20];
         char str2[20];
         FILE *fp2;
-        printf("请输入想要打开的文件夹\n");
-        scanf("%s",filename1);
         printf("请输入想要删除的联系人\n");
         scanf("%s",str2);
         while(p!=NULL)
@@ -248,11 +253,13 @@ int main()
             fprintf(fp2, "%s %d %s %lld %s\n", p->name, p->age, p->sex, p->phone, p->address);
             p=p->next;}
             fclose(fp2);
+            qingchuhuancun();
             printf("该联系人已删除\n");
-            printf("请输入1-9的数字\n");
+            printf("请输入1-6的数字\n");
             break;
+        }
         case 6:
-        p=head;
+        {p=head;
         struct data *temp;
         while(p!=NULL)
         {   
@@ -264,7 +271,7 @@ int main()
         tail=NULL;
         printf("系统退出，内存以释放\n");
         exit(0);
-        }}}
+        }}}}
         void duqu()
 {
     char a[20];
@@ -272,7 +279,7 @@ int main()
     char c[20];
     long long d;
     char e[20];
-    char filename[20];
+    char filename[200];
     FILE *fp;
     printf("请输入想要查找的文件夹\n");
     scanf("%s",filename);
@@ -300,4 +307,54 @@ int main()
             tail->next=new;
             tail=new;
         }}
+    }
+    char * duqu1()
+{
+    char a[20];
+    int b;
+    char c[20];
+    long long d;
+    char e[20];
+    static char filename[200];
+    FILE *fp;
+    printf("请输入想要查找的文件夹\n");
+    scanf("%s",filename);
+    if((fp=fopen(filename,"r"))==NULL)
+    {
+        printf("can't open file");
+        exit(0);
+    }
+    while(fscanf(fp,"%s%d%s%lld%s",a,&b,c,&d,e)!=EOF)
+    {
+        struct data *new=(struct data*)malloc(sizeof(struct data));
+        strcpy(new->name,a);
+        new->age=b;
+        strcpy(new->sex,c);
+        new->phone=d;
+        strcpy(new->address,e);
+        new->next=NULL;
+        if(head==NULL)
+        {
+            head=new;
+            tail=new;
+        }
+        else
+        {
+            tail->next=new;
+            tail=new;
+        }}
+        return filename;
+    }
+    void qingchuhuancun()
+    {
+        p=head;
+        struct data *temp;
+        while(p!=NULL)
+        {   
+            temp=p;
+            p=p->next;
+            free(temp);
+        }
+        head=NULL;
+        tail=NULL;
     }
